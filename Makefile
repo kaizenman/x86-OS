@@ -3,7 +3,7 @@ ASPARAMS = --32
 
 LDPARAMS = -melf_i386
 
-objects = loader.o gdt.o kernel.o
+objects = loader.o gdt.o port.o kernel.o
 
 %.o: %.cpp
 	i686-elf-g++ $(GPPPARAMS) -o $@ -c $<
@@ -30,7 +30,10 @@ mykernel.iso: mykernel.bin
 
 run: mykernel.iso
 	qemu-system-i386 -cdrom mykernel.iso
+.PHONY: clean
 clean:
-	rm -f *.o
-	rm -f *.bin
-	rm -f *.iso
+	rm -f $(objects)
+	rm -f mykernel.bin
+	rm -f mykernel.iso
+
+
