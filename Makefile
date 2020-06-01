@@ -6,20 +6,20 @@ LDPARAMS = -melf_i386
 objects = loader.o kernel.o
 
 %.o: %.cpp
-	g++ $(GPPPARAMS) -o $@ -c $<
+	i686-elf-g++ $(GPPPARAMS) -o $@ -c $<
 	
 %.o: %.s
-	as $(ASPARAMS) -o $@ $<
+	i686-elf-as $(ASPARAMS) -o $@ $<
 	
 mykernel.bin: linker.ld $(objects)
-	ld $(LDPARAMS) -T $< -o $@ ${objects}
-	
-install: mykernel.bin
+	i686-elf-ld $(LDPARAMS) -T $< -o $@ ${objects}
+
+mykernel.iso: mykernel.bin
 	mkdir iso
 	mkdir iso/boot
 	mkdir iso/boot/grub
 	cp $< iso/boot/
-	echo 'set timeout=0' > iso/boot/grub/grub.cfg
+	echo 'set timeout=15' > iso/boot/grub/grub.cfg
 	echo 'set default=0' >> iso/boot/grub/grub.cfg
 	echo 'menuentry "My Operating System" {' >> iso/boot/grub/grub.cfg
 	echo '   multiboot /boot/mykernel.bin' >> iso/boot/grub/grub.cfg
@@ -30,3 +30,7 @@ install: mykernel.bin
 
 run: mykernel.iso
 	qemu-system-i386 -cdrom mykernel.iso
+clean:
+	rm -f *.o
+	rm -f *.bin
+	rm -f *.iso
