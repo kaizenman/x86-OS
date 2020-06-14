@@ -1,12 +1,14 @@
+GCCPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
+LDPARAMS = -melf_i386
+
 boot.o : boot.s 
 		i686-elf-as -o boot.o boot.s
 
-kernel.o : kernel.c
-		i686-elf-gcc -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra 
+kernel.o : kernel.cpp
+		i686-elf-g++ -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c kernel.cpp -o kernel.o
 
-kernel.bin : kernel.o boot.o
-		i686-elf-gcc -T linker.ld -o kernel.bin -ffreestanding -nostdlib -O2 -Wall boot.o kernel.o -lgcc
-
+kernel.bin : linker.ld kernel.o boot.o
+		i686-elf-g++ -ffreestanding -O2 -nostdlib -T linker.ld kernel.o boot.o -o kernel.bin
 
 kernel.iso : kernel.bin
 		mkdir iso
@@ -21,6 +23,7 @@ kernel.iso : kernel.bin
 		printf "    boot\n" >> iso/boot/grub/grub.cfg
 		printf "}\n" >> iso/boot/grub/grub.cfg
 		grub-mkrescue -d /usr/lib/grub/i386-pc -o kernel.iso iso 
+		rm -rf iso
 		
 # Custom bootloader
 # boot.bin : boot.o
@@ -33,4 +36,7 @@ run: kernel.iso
 clean :
 		rm -f boot.o
 		rm -f boot.bin
-		rm -rd iso
+		rm -f kernel.bin
+		rm -f kernel.iso
+		rm -f kernel.o
+		
