@@ -1,14 +1,13 @@
-GCCPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
-LDPARAMS = -melf_i386
+OBJECTS = boot.o kernel.o Console.o 
 
-boot.o : boot.s 
-		i686-elf-as -o boot.o boot.s
+%.o: %.s
+	i686-elf-as --32 -o $@ $<
 
-kernel.o : kernel.cpp
-		i686-elf-g++ -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -c kernel.cpp -o kernel.o
+%.o: %.cpp
+	i686-elf-g++ -fno-use-cxa-atexit -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -o $@ -c $<
 
-kernel.bin : linker.ld kernel.o boot.o
-		i686-elf-g++ -ffreestanding -O2 -nostdlib -T linker.ld kernel.o boot.o -o kernel.bin
+kernel.bin : linker.ld $(OBJECTS)
+		i686-elf-g++ -m32 -ffreestanding -O2 -nostdlib -T linker.ld -o $@ $(OBJECTS)
 
 kernel.iso : kernel.bin
 		mkdir iso
@@ -34,9 +33,8 @@ run: kernel.iso
 
 .PHONY : clean
 clean :
-		rm -f boot.o
+		rm -f *.o
 		rm -f boot.bin
 		rm -f kernel.bin
 		rm -f kernel.iso
-		rm -f kernel.o
 		

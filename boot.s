@@ -38,9 +38,11 @@ stack_top:
 .section .text
 .global _start 		         # make our label "_start" visible to the outside
 .type _start, @function
+.global callConstructors
+.type callConstructors, @function
 _start:
 mov $stack_top, %esp
-
+call callConstructors
 call kernelMain
 
 # ignore maskable external interrupts
