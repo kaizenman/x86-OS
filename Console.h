@@ -33,10 +33,10 @@ public:
 
 	static volatile uint16_t * pVGATextBuffer;
 private:
-	static const uint16_t xMax = 80;
-	static const uint16_t yMax = 20;
-	static uint16_t x;
-	static uint16_t y;
+	static const uint16_t maxRowChars 	 = 80;
+	static const uint16_t maxColumnChars = 20;
+	static uint16_t rowIndex;
+	static uint16_t columnIndex;
 };
 
 #endif // __CONSOLE_H
