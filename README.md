@@ -15,9 +15,9 @@ sudo apt install libmpfr-dev
 sudo apt install libcloog-isl-dev
 sudo apt install libisl-dev
 sudo apt install texinfo
-export PREFIX=”$HOME/opt/cross”
+export PREFIX="$HOME/opt/cross"
 export TARGET=i686-elf
-export PATH=”$PREFIX/bin:$PATH”
+export PATH="$PREFIX/bin:$PATH"
 ```
 #### Build binutils
 ```
