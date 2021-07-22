@@ -1,13 +1,20 @@
-OBJECTS = boot.o kernel.o Console.o 
+GCCPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings -O2
+ASPARAMS = --32
+OBJECTS = boot.o gdt.o kernel.o Console.o 
+LDPARAMS = -melf_i386
+
+AS = i686-elf-as 
+CC = i686-elf-g++
+LD = i686-elf-ld
 
 %.o: %.s
-	i686-elf-as --32 -o $@ $<
+	$(AS) $(ASPARAMS) -o $@ $<
 
 %.o: %.cpp
-	i686-elf-g++ -fno-use-cxa-atexit -m32 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -o $@ -c $<
+	$(CC) $(GCCPARAMS) -o $@ -c $<
 
 kernel.bin : linker.ld $(OBJECTS)
-		i686-elf-g++ -m32 -ffreestanding -O2 -nostdlib -T linker.ld -o $@ $(OBJECTS)
+	$(LD) $(LDPARAMS) -T $< -o $@ $(OBJECTS)
 
 kernel.iso : kernel.bin
 		mkdir iso
