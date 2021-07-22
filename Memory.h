@@ -21,7 +21,7 @@ namespace IOMemoryMap
     const uint16_t ResetControlRegisterTurbo                 = 0x0CF9;  // 1 byte
     const uint16_t PCIConfigurationAddressRegister           = 0x0CF8;  // 4 bytes
     //const uint16_t ECPPort                                   = 0x
-    const uint16_t WindowsSoundSystem                        = 0x0530;  // or 0xE80, or 0xF40, 8 bytes
+    const uint16_t WindowsSoundSystem2                       = 0x0530;  // or 0xE80, or 0xF40, 8 bytes
     const uint16_t EdgeLevelTriggeredPIC                     = 0x04D0;  // 2 bytes
     const uint16_t COM1                                      = 0x03F8;  // 8 bytes
     const uint16_t PrimaryIDEChannelStatusPort               = 0x03F7;  // start bit 0, size 7 bit
@@ -240,10 +240,12 @@ namespace Interrupts
 
     // We must send an ICW 3 whenever we enable cascading within ICW 1
     struct ICW3Secondary {
-        ICW3Primary(
-            uint8_t masterPICIRQNumber, // bit 0 - 2 IRQ number the master PIC uses to connect to (In binary notation)
-                                        // bit2 is IRQ2 the 80x86 architecture uses IRQ line 2 to connect the master PIC to the slave PIC.
-            uint8_t reserved = 0        // bit 3 - 7 must be 0
+        ICW3Secondary(
+            // bit 0 - 2 IRQ number the master PIC uses to connect to (In binary notation)
+            // bit2 is IRQ2 the 80x86 architecture uses IRQ line 2 to connect the master PIC to the slave PIC.
+            // bit 3 - 7 must be 0
+            uint8_t masterPICIRQNumber, 
+            uint8_t reserved = 0
         ) {
             byte = masterPICIRQNumber & 0b00000011;
             byte |= reserved << 3 & 0b11111100;

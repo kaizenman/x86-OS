@@ -22,7 +22,7 @@
 # CHECKSUM value when added to the magic + flags, must have a 32-bit unsigned sum of zero
 .set CHECKSUM, -(MAGIC + FLAGS)
 
-.section multiboot
+.section .multiboot
 # align at a 32-bit boundary
 .align 4
 .long MAGIC
