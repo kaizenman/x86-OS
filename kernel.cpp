@@ -2,6 +2,7 @@
 #include "Console.h"
 #include "gdt.h"
 #include "interrupts.h"
+#include "keyboard.h"
 
 typedef void * (*constructor)();
 extern "C" constructor start_ctors;
@@ -14,10 +15,11 @@ extern "C" void callConstructors()
 
 extern "C" void kernelMain(void* multiboot_structure, uint32_t checksum) {
 	Console::Initialize();
-	Console::WriteLine("kernelMain");
+	//Console::Write("kernelMain");
 	
 	GlobalDescriptorTable gdt;
-	InterruptManager interrupts(0x20, &gdt);
+	InterruptManager interrupts(&gdt);
+	KeyboardDriver keyboard(&interrupts);
 
 	interrupts.Activate();
 

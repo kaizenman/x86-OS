@@ -27,14 +27,18 @@ class Console
 private:
 	Console() = default;
 	~Console() = default;
+
+	static void WriteChar(unsigned char c, unsigned char forecolour, unsigned char backcolour, uint8_t x, uint8_t y);
+	static void Update_cursor(int x, int y);
+
 public:
 	static void Initialize();
-	static void WriteLine(const char * c, vga_color fg = VGA_COLOR_WHITE, vga_color bg = VGA_COLOR_BLACK);
+	static void Write(const char * c, vga_color fg = VGA_COLOR_WHITE, vga_color bg = VGA_COLOR_BLACK);
 
 	static volatile uint16_t * pVGATextBuffer;
 private:
-	static const uint16_t maxRowChars 	 = 80;
-	static const uint16_t maxColumnChars = 20;
+	static const uint16_t maxRowChars 	 = 20;
+	static const uint16_t maxColumnChars = 80;
 	static uint16_t rowIndex;
 	static uint16_t columnIndex;
 };

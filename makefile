@@ -1,6 +1,6 @@
 GCCPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
 ASPARAMS = --32
-OBJECTS = boot.o gdt.o interrupts.o interruptstubs.o  port.o Console.o kernel.o 
+OBJECTS = boot.o gdt.o keyboard.o interrupts.o interruptstubs.o  port.o Console.o kernel.o 
 LDPARAMS = -melf_i386
 
 AS = i686-elf-as 
