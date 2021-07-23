@@ -41,19 +41,14 @@ stack_top:
 .global callConstructors
 .type callConstructors, @function
 _start:
-mov $stack_top, %esp
-call callConstructors
-call kernelMain
+    mov $stack_top, %esp
+    call callConstructors
+    call kernelMain
 
-# ignore maskable external interrupts
-cli
-
-# place processor in a HALT state 
-# an enabled interrupt (NMI, SMI), a debug exception, the BINIT# signal, the INT# signal or RESET# signal will resume execution
-1:
-hlt
-# make an infinite loop if that happened 1b means the most recent previous definition of 1 label
-jmp 1b
+_stop:
+    cli
+    hlt
+    jmp _stop
 
 
 

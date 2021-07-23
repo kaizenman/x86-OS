@@ -56,12 +56,12 @@ namespace IOMemoryMap
     const uint16_t ResetNumericError                         = 0x00F0;  // 1 byte
     const uint16_t PIIX4EDMA2                                = 0x00C0;  // 31 bytes
     const uint16_t APMControl                                = 0x00B2;  // 2 bytes
-    // ------------------ Primary PIC (8259A PIC) --------------------------------
-    const uint16_t SecondaryPICInterruptMaskRegister         = 0x0021;  // 1 byte
-    const uint16_t SecondaryPICDataRegister                  = 0x0021;  // 1 byte
-    const uint16_t SecondaryPICCommandRegister               = 0x0020;  // 1 byte, Write only
-    const uint16_t SecondaryPICStatusRegister                = 0x0020;  // 1 byte, Read only
-    const uint16_t PIIX4EInterruptController2                = 0x0020;  // 2 bytes
+    // ------------------ Secondary PIC (8259A PIC) 0x00A0 - 0x00A1  --------------------------------
+    const uint16_t SecondaryPICInterruptMaskRegister         = 0x00A1;  // 1 byte
+    const uint16_t SecondaryPICDataRegister                  = 0x00A1;  // 1 byte
+    const uint16_t SecondaryPICCommandRegister               = 0x00A0;  // 1 byte, Write only
+    const uint16_t SecondaryPICStatusRegister                = 0x00A0;  // 1 byte, Read only
+    const uint16_t PIIX4EInterruptController2                = 0x00A0;  // 2 bytes
     // --------------------------------------------------------------
     const uint16_t PIIX4EDMAPageRegisters                    = 0x0080;  // 16 bytes
     const uint16_t CMOSBank1                                 = 0x0072;  // 2 bytes
@@ -74,7 +74,7 @@ namespace IOMemoryMap
     const uint16_t KeyboardControllerResetIRQ                = 0x0048;  // 1 byte
     const uint16_t PIIX4ECounterTimer2                       = 0x004B;  // 4 bytes
     const uint16_t PIIX4ECounterTimer1                       = 0x0040;  // 4 bytes
-    // ------------------ Primary PIC (8259A PIC) --------------------------------
+    // ------------------ Primary PIC (8259A PIC)  0x0020 - 0x0021  --------------------------------
     const uint16_t PrimaryPICInterruptMaskRegister           = 0x0021;  // 1 byte
     const uint16_t PrimaryPICDataRegister                    = 0x0021;  // 1 byte
     const uint16_t PrimaryPICCommandRegister                 = 0x0020;  // 1 byte, Write only
@@ -83,7 +83,7 @@ namespace IOMemoryMap
     // --------------------------------------------------------------
     const uint16_t PIIX4EDMA1                                = 0x0000;  // 16 bytes
 }
-
+/*
 namespace Interrupts
 {
     namespace InterruptVectorTable
@@ -292,7 +292,7 @@ namespace Interrupts
     const uint8_t IRQ14_PrimaryIDE                          = 0x0E; // user available if not present
     const uint8_t IRQ15_SecondaryIDE                        = 0x0F; // user available if not present
 }
-
+*/
 namespace CPUMemoryMap
 {
     //-------------- Extended Pentium Pro Processor Memory -----------------

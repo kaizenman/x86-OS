@@ -18,6 +18,7 @@ public:
     Port8Bit(uint16_t portnumber) : Port(portnumber) {}
     ~Port8Bit() = default;
 
+    // @todo: if we want to use virtual functions, we need to support virtual destructors
     virtual void Write(uint8_t data);
     uint8_t Read();
 };
