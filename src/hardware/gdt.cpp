@@ -1,4 +1,7 @@
-#include "gdt.h"
+#include <hardware/gdt.h>
+
+using namespace x86_OS::hardware;
+using namespace x86_OS::common;
 
 GlobalDescriptorTable::GlobalDescriptorTable() : 
     nullSegmentSelector(0, 0, 0),

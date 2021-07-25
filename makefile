@@ -1,20 +1,33 @@
-GCCPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
+GCCPARAMS = -Iinclude -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
 ASPARAMS = --32
-OBJECTS = boot.o gdt.o keyboard.o interrupts.o interruptstubs.o  port.o Console.o kernel.o 
+OBJECTS = 	obj/boot.o \
+			obj/drivers/driver.o \
+			obj/hardware/gdt.o \
+			obj/drivers/mouse.o \
+			obj/drivers/keyboard.o \
+			obj/hardware/interrupts.o \
+			obj/hardware/interruptstubs.o \
+			obj/hardware/port.o \
+			obj/common/console.o \
+			obj/kernel.o 
+
 LDPARAMS = -melf_i386
 
 AS = i686-elf-as 
 CC = i686-elf-g++
 LD = i686-elf-ld
 
-%.o: %.s
-	$(AS) $(ASPARAMS) -o $@ $<
+obj/%.o: src/%.cpp
+	mkdir -p $(@D)
+	gcc $(GCCPARAMS) -c -o $@ $<
 
-%.o: %.cpp
-	$(CC) $(GCCPARAMS) -o $@ -c $<
+obj/%.o: src/%.s
+	mkdir -p $(@D)
+	as $(ASPARAMS) -o $@ $<
 
-kernel.bin : linker.ld $(OBJECTS)
-	$(LD) $(LDPARAMS) -T $< -o $@ $(OBJECTS)
+kernel.bin: linker.ld $(OBJECTS)
+	ld $(LDPARAMS) -T $< -o $@ $(OBJECTS)
+
 
 kernel.iso : kernel.bin
 		mkdir iso
@@ -36,12 +49,13 @@ kernel.iso : kernel.bin
 #		i686-elf-ld -o boot.bin --oformat binary -e _start boot.o
 
 run: kernel.iso
-		qemu-system-i386 -cdrom kernel.iso -boot d
+		qemu-system-i386 -cdrom kernel.iso -boot d -show-cursor
 
 .PHONY : clean
 clean :
-		rm -f *.o
+		rm -rf obj
 		rm -f boot.bin
 		rm -f kernel.bin
 		rm -f kernel.iso
+
 		

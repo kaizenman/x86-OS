@@ -1,4 +1,7 @@
-#include "port.h"
+#include <hardware/port.h>
+
+using namespace x86_OS::common;
+using namespace x86_OS::hardware;
 
 void Port8Bit::Write(uint8_t data)
 {

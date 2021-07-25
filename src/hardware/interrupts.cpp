@@ -1,7 +1,10 @@
 
-#include "interrupts.h"
-#include "Console.h"
+#include <common/console.h>
+#include <hardware/interrupts.h>
+#include <hardware/pic.h>
 
+using namespace x86_OS::common;
+using namespace x86_OS::hardware;
 
 InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256];
 InterruptManager* InterruptManager::ActiveInterruptManager = nullptr;
@@ -23,10 +26,10 @@ void InterruptManager::SetInterruptDescriptorTableEntry(uint8_t interrupt,
 
 InterruptManager::InterruptManager(GlobalDescriptorTable* globalDescriptorTable)
 
-    : programmableInterruptControllerMasterCommandPort(0x20),
-      programmableInterruptControllerMasterDataPort(0x21),
-      programmableInterruptControllerSlaveCommandPort(0xA0),
-      programmableInterruptControllerSlaveDataPort(0xA1)
+    : picMasterCmd(0x20),
+      picMasterData(0x21),
+      picSlaveCmd(0xA0),
+      picSlaveData(0xA1)
 {
     uint32_t CodeSegment = globalDescriptorTable->CodeSegmentSelector();
 
@@ -77,8 +80,8 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* globalDescriptorTable)
     SetInterruptDescriptorTableEntry(Interrupts::HardwareInterruptOffset + 0x0E, CodeSegment, &HandleInterruptRequest0x0E, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(Interrupts::HardwareInterruptOffset + 0x0F, CodeSegment, &HandleInterruptRequest0x0F, 0, IDT_INTERRUPT_GATE);
 
-    programmableInterruptControllerMasterCommandPort.Write(0x11);
-    programmableInterruptControllerSlaveCommandPort.Write(0x11);
+    picMasterCmd.Write(0x11);
+    picSlaveCmd.Write(0x11);
 
     // remap
     // In protected mode, the IRQs 0 to 7 conflict with the CPU exception which are reserved by Intel up until 0x1F. 
@@ -87,17 +90,17 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* globalDescriptorTable)
     // It is thus recommended to change the PIC's offsets (also known as remapping the PIC) so that IRQs use non-reserved vectors
     // A common choice is to move them to the beginning of the available range (IRQs 0..0xF -> INT 0x20..0x2F). 
     // For that, we need to set the master PIC's offset to 0x20 and the slave's to 0x28.
-    programmableInterruptControllerMasterDataPort.Write(Interrupts::HardwareInterruptOffset);
-    programmableInterruptControllerSlaveDataPort.Write(Interrupts::HardwareInterruptOffset+8);
+    picMasterData.Write(Interrupts::HardwareInterruptOffset);
+    picSlaveData.Write(Interrupts::HardwareInterruptOffset+8);
 
-    programmableInterruptControllerMasterDataPort.Write(0x04);
-    programmableInterruptControllerSlaveDataPort.Write(0x02);
+    picMasterData.Write(0x04);
+    picSlaveData.Write(0x02);
 
-    programmableInterruptControllerMasterDataPort.Write(0x01);
-    programmableInterruptControllerSlaveDataPort.Write(0x01);
+    picMasterData.Write(0x01);
+    picSlaveData.Write(0x01);
 
-    programmableInterruptControllerMasterDataPort.Write(0x00);
-    programmableInterruptControllerSlaveDataPort.Write(0x00);
+    picMasterData.Write(0x00);
+    picSlaveData.Write(0x00);
 
     InterruptDescriptorTablePointer idt_pointer;
     idt_pointer.size  = 256*sizeof(GateDescriptor) - 1;
@@ -159,10 +162,10 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp)
     // from 0x20 - to 0x30
     if (0x20 <= interrupt && interrupt < 0x30)
     {
-        programmableInterruptControllerMasterCommandPort.Write(0x20);
+        picMasterCmd.Write(0x20);
         // send answer if slave
         if (0x28 <= interrupt)
-            programmableInterruptControllerSlaveCommandPort.Write(0x20);
+            picSlaveCmd.Write(0x20);
     }
 
     return esp;
