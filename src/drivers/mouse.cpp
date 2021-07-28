@@ -49,32 +49,32 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp)
         return esp;
 
     buffer[offset] = dataPort.Read();
-
-    if (handler == 0)
+    
+    if(handler == 0)
         return esp;
-
+    
     offset = (offset + 1) % 3;
 
     if(offset == 0)
     {
-        int8_t xoffset = (int8_t)buffer[1];
-        int8_t yoffset = -(int8_t)buffer[2];
-
-        if(xoffset != 0 || yoffset != 0)
+        if(buffer[1] != 0 || buffer[2] != 0)
         {
-            handler->OnMouseMove(xoffset, yoffset);
+            handler->OnMouseMove((int8_t)buffer[1], -((int8_t)buffer[2]));
         }
 
-        for (uint8_t i = 0; i < 3; ++i) {
-            if ((buttons & (0x01 << i)) != (buffer[0] & (0x01 << i)))
+        for(uint8_t i = 0; i < 3; i++)
+        {
+            if((buffer[0] & (0x1<<i)) != (buttons & (0x1<<i)))
             {
-                handler->OnMouseDown(i);
+                if(buttons & (0x1<<i))
+                    handler->OnMouseUp(i+1);
+                else
+                    handler->OnMouseDown(i+1);
             }
         }
-
         buttons = buffer[0];
     }
-
+    
     return esp;
 }
 
@@ -97,7 +97,7 @@ void MouseEventHandler::OnMouseUp(uint8_t button)
 
 }
 
-void MouseEventHandler::OnMouseMove(int xoffset, int yoffset)
+void MouseEventHandler::OnMouseMove(int8_t xoffset, int8_t yoffset)
 {
 
 }
@@ -110,7 +110,7 @@ void MouseToConsole::OnMouseDown(uint8_t button)
                     | (VideoMemory[80*y+x] & 0x00FF);
 }
 
-void MouseToConsole::OnMouseMove(int xoffset, int yoffset)
+void MouseToConsole::OnMouseMove(int8_t xoffset, int8_t yoffset)
 {
     static uint16_t* VideoMemory = (uint16_t*)cpu_memory_map::PCIVideoMemoryTextModeStart;
     VideoMemory[80*y+x] = (VideoMemory[80*y+x] & 0x0F00) << 4

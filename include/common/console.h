@@ -5,7 +5,7 @@ namespace x86_OS
 {
     namespace common
     {
-        enum vga_color {
+        enum vga_color : uint8_t {
             VGA_COLOR_BLACK = 0,
             VGA_COLOR_BLUE = 1,
             VGA_COLOR_GREEN = 2,

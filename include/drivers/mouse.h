@@ -47,7 +47,7 @@ namespace x86_OS
 
             virtual void OnMouseDown(uint8_t button);
             virtual void OnMouseUp(uint8_t button);
-            virtual void OnMouseMove(int xoffset, int yoffset);
+            virtual void OnMouseMove(int8_t xoffset, int8_t yoffset);
         };
 
 
@@ -56,7 +56,7 @@ namespace x86_OS
         public:
             MouseToConsole() {}
             void OnMouseDown(uint8_t button);
-            void OnMouseMove(int xoffset, int yoffset);
+            void OnMouseMove(int8_t xoffset, int8_t yoffset);
         };
 
     }

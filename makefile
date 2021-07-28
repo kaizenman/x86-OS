@@ -5,8 +5,13 @@ OBJECTS = 	obj/boot.o \
 			obj/hardware/gdt.o \
 			obj/drivers/mouse.o \
 			obj/drivers/keyboard.o \
+			obj/drivers/vga.o \
+			obj/gui/desktop.o \
+			obj/gui/widget.o \
+			obj/gui/window.o \
 			obj/hardware/interrupts.o \
 			obj/hardware/interruptstubs.o \
+			obj/hardware/pci.o \
 			obj/hardware/port.o \
 			obj/common/console.o \
 			obj/kernel.o 
@@ -47,9 +52,10 @@ kernel.iso : kernel.bin
 # Custom bootloader
 # boot.bin : boot.o
 #		i686-elf-ld -o boot.bin --oformat binary -e _start boot.o
-
+# -show-cursor
 run: kernel.iso
-		qemu-system-i386 -cdrom kernel.iso -boot d -show-cursor
+		qemu-system-i386 -cdrom kernel.iso -boot d -device virtio-vga
+		
 
 .PHONY : clean
 clean :
